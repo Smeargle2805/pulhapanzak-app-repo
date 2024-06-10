@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonButton, IonContent, IonHeader, IonIcon, IonInput, IonInputPasswordToggle, IonItem, IonLabel, IonRouterLink, IonTitle, IonToolbar } from '@ionic/angular/standalone';
-import { User } from 'src/app/Models/IUser';
-import { RouterLink } from '@angular/router';
+import { IonButton, IonContent, IonHeader, IonIcon, IonInput, IonInputPasswordToggle, IonItem, IonLabel, IonRouterLink, IonTitle, IonToolbar, ToastController } from '@ionic/angular/standalone';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from 'src/app/auth/services/auth.service';
+import { UserDto } from 'src/app/shared/models/user-interface';
 
 @Component({
   selector: 'app-register-page',
@@ -12,32 +13,90 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonItem, IonLabel, IonInput, IonButton, IonIcon, ReactiveFormsModule, RouterLink, IonRouterLink, IonInputPasswordToggle]
 })
-export class RegisterPage{
+export class RegisterPage {
 
-  registerForm: FormGroup;
+  private authService = inject(AuthService);
+  private formBuilder = inject(FormBuilder);
+  private _router = inject(Router);
+  toastController: ToastController = inject(ToastController);
 
-  constructor(private fb: FormBuilder) {
-    this.registerForm = this.fb.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      identityNumber: ['', [Validators.required, Validators.minLength(13), Validators.pattern(/^\d+$/)]],
-      phoneNumber: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^\d+$/)]]
-    });
+  registerForm: FormGroup = this.formBuilder.group({
+    email: ['', [Validators.required, Validators.email]],
+    name: ['', Validators.required],
+    lastname: ['', Validators.required],
+    password: ['', Validators.required],
+    dni: ['', [Validators.required, Validators.minLength(13), Validators.pattern(/^\d+$/)]],
+    phoneNumber: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^\d+$/)]],
+
+  });
+
+  get isEmailInvalid(): boolean {
+    const control = this.registerForm.get('email');
+    return control ? control.hasError('email') && control.touched : false;
   }
 
-  get isFirstNameInvalid(): boolean { return this.registerForm.get('firstName')!.invalid && (this.registerForm.get('firstName')!.dirty || this.registerForm.get('firstName')!.touched); }
-  get isLastNameInvalid(): boolean { return this.registerForm.get('lastName')!.invalid && (this.registerForm.get('lastName')!.dirty || this.registerForm.get('lastName')!.touched); }
-  get isEmailInvalid(): boolean { return this.registerForm.get('email')!.invalid && (this.registerForm.get('email')!.dirty || this.registerForm.get('email')!.touched); }
-  get isPasswordInvalid(): boolean { return this.registerForm.get('password')!.invalid && (this.registerForm.get('password')!.dirty || this.registerForm.get('password')!.touched); }
-  get isIdentityNumberInvalid(): boolean { return this.registerForm.get('identityNumber')!.invalid && (this.registerForm.get('identityNumber')!.dirty || this.registerForm.get('identityNumber')!.touched); }
-  get isPhoneNumberInvalid(): boolean { return this.registerForm.get('phoneNumber')!.invalid && (this.registerForm.get('phoneNumber')!.dirty || this.registerForm.get('phoneNumber')!.touched); }
+  get isEmailRequired(): boolean {
+    const control = this.registerForm.get('email');
+    return control ? control.hasError('required') && control.touched : false;
+  }
 
-  onSubmit() {
-    if (this.registerForm.valid) {
-      const user: User = this.registerForm.value;
-      console.log('User Registered:', user);
+  get isNameRequired(): boolean {
+    const control = this.registerForm.get('name');
+    return control ? control.hasError('required') && control.touched : false;
+  }
+
+  get isLastNameRequired(): boolean {
+    const control = this.registerForm.get('lastname');
+    return control ? control.hasError('required') && control.touched : false;
+  }
+
+  get isPasswordRequired(): boolean {
+    const control = this.registerForm.get('password');
+    return control ? control.hasError('required') && control.touched : false;
+  }
+
+  get isDNIValid(): boolean {
+    const control = this.registerForm.get('dni');
+    return control ? control.hasError('pattern') && control.touched : false;
+  }
+
+  get isPhoneNumberValid(): boolean {
+    const control = this.registerForm.get('phoneNumber');
+    return control ? control.hasError('pattern') && control.touched : false;
+  }
+
+  get isFormInvalid(): boolean {
+    return this.registerForm.invalid;
+  }
+
+  createUser(user: UserDto): void {
+    this.authService.createUserInFirestore(user);
+  }
+
+  onSubmit(): void {
+    if (!this.isFormInvalid) {
+      const user: UserDto = this.registerForm?.value;
+      user.imageProfile = '';
+      this.authService
+        .createUserWithEmailAndPassword(user)
+        .then(() => {
+          this.showAlert('Usuario registrado correctamente', false);
+          this._router.navigate(['/login-page']);
+        })
+        .catch((error) => {
+          console.error(error);
+          this.showAlert('Error al registrar el usuario', true);
+        });
     }
+  }
+
+  async showAlert(message: string, error: boolean = false): Promise<void> {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 5000,
+      position: 'bottom',
+      color: error ? 'danger' : 'success',
+    });
+    await toast.present();
   }
 }

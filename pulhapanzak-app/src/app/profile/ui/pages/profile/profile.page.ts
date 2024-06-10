@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserDto } from 'src/app/shared/models/user-interface';
 import { Camera, CameraResultType } from '@capacitor/camera';
-import { AuthService } from '../auth/services/auth.service';
+import { AuthService } from 'src/app/auth/services/auth.service';
 import { Router } from '@angular/router';
 import { maxDateValidator } from 'src/app/shared/validators/max-date-validator';
 import { StorageService } from 'src/app/shared/services/storage.service';

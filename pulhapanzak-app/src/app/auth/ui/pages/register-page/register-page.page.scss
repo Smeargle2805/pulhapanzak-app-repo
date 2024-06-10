@@ -1,64 +1,99 @@
-.error {
-    border: 2px solid #FB0021 !important;
-  }
-  
-  .btn-back {
-    padding-left: 15px;
-    --background: transparent;
-    --box-shadow: 0 0 0 0;
-  }
-  .btn-back:hover{
-    cursor: pointer;
-  }
-  
-  .title-content {
-    text-align: center;
-    --color: #FB0021;
-    margin-top: 1rem;
-    margin-bottom: 1.8rem;
-    font-weight: bold;
-    font-size: 1.8rem;
-  }
-  
-  .formulario {
+:host {
+  ion-content {
+    --background: #ffffff;
     display: flex;
+    justify-content: center;
     align-items: center;
-    flex-direction: column;
   }
-  
-  .container-forms {
-    width: 90%;
-    display: flex;
-    flex-direction: column !important;
-    margin-bottom: 1.6rem;
-  }
-  
-  .div-label {
-    display: flex;
-    align-items: center;
-    padding-left: 1rem;
-  }
-  
-  .div-label > ion-label {
-    margin-left: 10px;
-  }
-  
-  .input-modify {
-    border: solid gray 1px;
-    margin-top: 1.2rem;
-    border-radius: 15px;
-    padding: 5px 15px 5px 15px!important;
-  }
-  
+}
 
-  .btn-active {
-    --background: #FB0021;
-    --color: #FFF;
-    --border-radius:12px!important
-  }
-  
-  .btn-inactive {
-    --background: gray;
-    --color: #D3D3D3;
-    --border-radius:12px!important
-  }
+.titulo {
+  color: #000000;
+  font-weight: bold;
+}
+
+.login-screen_container {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+.container-forms {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.div-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.div-label ion-label {
+  margin-left: 10px;
+}
+
+.input-modify {
+  width: 100%;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 16px;
+  color: #000000;
+}
+
+.input-modify.error {
+  border-color: #ff0000;
+}
+
+.login-screen_text-red {
+  color: #ff0000;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.error-message {
+  color: #ff0000;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.login-screen_mt {
+  margin-top: 20px;
+  width: 100%;
+}
+
+ion-toolbar {
+  --background: #FB0021;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+}
+
+.title-content {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  color: #000000;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.formulario {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+.btn-active {
+  background-color: #FB0021;
+}
+
+.btn-inactive {
+  background-color: #ccc;
+}

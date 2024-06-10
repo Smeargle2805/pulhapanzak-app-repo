@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { collection, deleteDoc, doc, Firestore, getDoc, getDocs, query, setDoc, updateDoc, where } from '@angular/fire/firestore';
+import { addDoc, collection, deleteDoc, doc, Firestore, getDoc, getDocs, query, setDoc, Timestamp, updateDoc, where } from '@angular/fire/firestore';
 import { LoginDto } from '../models/login';
 import { Auth, UserCredential, signInWithEmailAndPassword, createUserWithEmailAndPassword, User } from '@angular/fire/auth';
 import { UserDto } from 'src/app/shared/models/user-interface';
@@ -13,6 +13,29 @@ export class AuthService {
   private _auth = inject(Auth);
   private _firestore = inject(Firestore);
   private _collection = collection(this._firestore, PATH);
+  private galleriesCollection;
+
+  constructor(private firestore: Firestore) {
+    this.galleriesCollection = collection(this.firestore, 'galleries');
+  }
+
+  async createGallery(galleryData: any): Promise<void> {
+    try {
+      const now = Timestamp.now();
+      await addDoc(this.galleriesCollection, {
+        bool: galleryData.bool,
+        createdAt: now,
+        createdBy: galleryData.createdBy,
+        description: galleryData.description,
+        photo: galleryData.photo,
+        placeName: galleryData.placeName,
+        uid: galleryData.uid,
+      });
+    } catch (error) {
+      console.error('Error creating gallery:', error);
+      throw error;
+    }
+  }
 
   // Método para obtener el usuario actual de la sesión
   async getCurrentUser(): Promise<User | null> {

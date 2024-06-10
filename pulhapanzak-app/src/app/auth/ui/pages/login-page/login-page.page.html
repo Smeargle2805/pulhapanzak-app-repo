@@ -1,6 +1,6 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title style="background-color: red;">Iniciar Sesion</ion-title>
+  <ion-toolbar style="background-color: red;">
+    <ion-title class="titulo">Iniciar Sesión</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -18,10 +18,11 @@
           </svg>
           <ion-label class="titulo">Correo Electrónico</ion-label>
         </div>
-        <ion-input formControlName="email" type="email" class="input-modify" [ngClass]="{'error-border': isEmailInvalid || isEmailRequired}">
-        </ion-input>
+        <ion-input aria-label="email" class="input-modify" name="email" type="email"
+          placeholder="Ingrese su correo electrónico" formControlName="email" ngDefaultControl
+          [ngClass]="{'error': isEmailInvalid, 'input-modify': !isEmailInvalid }"></ion-input>
         <span class="login-screen_text-red" *ngIf="isEmailInvalid">
-          El correo es inválido.
+          Ingrese un correo electrónico válido.
         </span>
         <span class="login-screen_text-red" *ngIf="isEmailRequired">
           El correo electrónico es requerido.
@@ -40,21 +41,18 @@
           </svg>
           <ion-label class="titulo">Contraseña</ion-label>
         </div>
-        <ion-input type="password" formControlName="password" class="input-modify" [ngClass]="{'error-border': isPasswordRequired}">
-          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
-        </ion-input>
+        <ion-input aria-label="password" class="input-modify" name="password" formControlName="password"
+          placeholder="Ingrese su contraseña" type="password" ngDefaultControl></ion-input>
         <span class="login-screen_text-red" *ngIf="isPasswordRequired">
           La contraseña es requerida.
         </span>
       </div>
 
-      <ion-button class="login-screen_mt" expand="block" type="submit" [disabled]="isFormInvalid">Iniciar sesión</ion-button>
+      <ion-button class="login-screen_mt" expand="block" type="submit" [disabled]="isFormInvalid">Iniciar
+        sesión</ion-button>
     </form>
-    <a class="login-screen_register" routerLink="/register">
-      ¿No tienes cuenta? Regístrate
-    </a>
+
+    <a class="login-screen_register" routerLink="register-page"> ¿No tienes cuenta? Regístrate </a>
+
   </div>
 </ion-content>
-
-
-

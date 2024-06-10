@@ -15,19 +15,16 @@ import { LoginDto } from 'src/app/auth/models/login';
   imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonLabel, IonInputPasswordToggle, IonButton, ReactiveFormsModule, IonModal],
 })
 export class LoginPage {
-  loginForm: FormGroup;
 
-  constructor(
-    private authService: AuthService,
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private toastController: ToastController
-  ) {
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-    });
-  }
+  private _authService = inject(AuthService);
+  private formBuilder = inject(FormBuilder);
+  private _router = inject(Router);
+  private toastController = inject(ToastController);
+
+  loginForm: FormGroup = this.formBuilder.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
+  });
 
   get isEmailInvalid(): boolean {
     const emailControl = this.loginForm.get('email');
@@ -50,26 +47,26 @@ export class LoginPage {
 
   onSubmit(): void {
     if (!this.isFormInvalid) {
-      const loginData = {
-        email: this.loginForm.get('email')?.value,
-        password: this.loginForm.get('password')?.value,
+      const login: LoginDto = {
+        email: this.loginForm?.get('email')?.value,
+        password: this.loginForm?.get('password')?.value,
       };
 
-      this.authService.signInWithEmailAndPassword(loginData).then(() => {
-        this.router.navigate(['/home']);
+      this._authService.signInWithEmailAndPassword(login).then(() => {
+        this._router.navigate(['/home']);
         this.showAlert('Ha iniciado sesión correctamente');
-      }).catch(() => {
+      }).catch((error) => {
         this.showAlert('Upps, correo o contraseña inválida', true);
       });
     }
   }
 
-  async showAlert(message: string, isError: boolean = false): Promise<void> {
+  async showAlert(message: string, error: boolean = false): Promise<void> {
     const toast = await this.toastController.create({
       message: message,
       duration: 5000,
       position: 'bottom',
-      color: isError ? 'danger' : 'success',
+      color: error ? 'danger' : 'success',
     });
     await toast.present();
   }
