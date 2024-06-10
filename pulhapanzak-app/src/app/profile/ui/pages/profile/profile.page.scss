@@ -1,0 +1,48 @@
+.logOut-button {
+  color: #1749b7;
+  margin-top: 20px;
+}
+
+.logOut-button-icon {
+  margin-right: 5px;
+}
+
+.register-page_container {
+  padding: 15px;
+  margin-top: 20px;
+
+  .register-page_text-red {
+    color: red;
+    margin-bottom: 15px;
+  }
+
+  .register-page_mt {
+    margin-top: 15px;
+  }
+
+  .register-page_input {
+    border: none;
+  }
+
+  .register-page_invalidInput {
+    border: 2px solid red;
+  }
+}
+
+.register-page_login {
+  float: right;
+  margin-top: 10px;
+  text-decoration: none;
+}
+
+.user-page_photo {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+ion-toast.toast-custom .toast-wrapper {
+  background-color: green !important; // Cambia el color de fondo según lo necesites
+}

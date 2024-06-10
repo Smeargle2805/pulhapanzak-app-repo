@@ -1,0 +1,78 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Mi Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <div class="register-page_container">
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <ion-item>
+        <ion-img
+          class="user-page_photo"
+          [src]="imageSrc"
+          (click)="pickImage()"
+        ></ion-img>
+      </ion-item>
+      <ion-item>
+        <ion-label class="register-page_mt">Nombre completo:</ion-label>
+        <ion-input
+          aria-label="name"
+          class="register-page_input"
+          name="name"
+          type="text"
+          placeholder="Ingrese su nombre y apellido"
+          formControlName="name"
+          ngDefaultControl
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label class="register-page_mt">Teléfono:</ion-label>
+        <ion-input
+          aria-label="phoneNumber"
+          class="register-page_input"
+          name="phoneNumber"
+          type="number"
+          placeholder="Ingrese su número de teléfono"
+          formControlName="phoneNumber"
+          ngDefaultControl
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label class="register-page_mt">Fecha de nacimiento:</ion-label>
+        <ion-input
+          aria-label="birthdate"
+          class="register-page_input"
+          name="birthdate"
+          type="date"
+          placeholder="Ingrese su fecha de nacimiento"
+          formControlName="birthdate"
+          displayFormat="DD/MM/YYYY"
+          ngDefaultControl
+        ></ion-input>
+        <span class="register-page_text-red" *ngIf="isBirthdateInvalid">
+          La fecha de nacimiento no puede ser mayor que el día actual.
+        </span>
+      </ion-item>
+      <ion-button
+        class="register-page_mt"
+        expand="block"
+        type="submit"
+        [disabled]="isFormInvalid"
+        >Guardar</ion-button
+      >
+    </form>
+    <ion-button
+      class="logOut-button"
+      expand="block"
+      (click)="signOut()"
+      fill="outline"
+      type="button"
+    >
+      <ion-icon
+        class="logOut-button-icon"
+        src="assets/icon/logout.svg"
+      ></ion-icon>
+      Cerrar sesión</ion-button
+    >
+  </div>
+</ion-content>
