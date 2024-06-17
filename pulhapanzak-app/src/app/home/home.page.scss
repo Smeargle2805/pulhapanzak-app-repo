@@ -1,27 +1,29 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+ion-avatar {
+  --size: 70px;
+  margin-right: 16px;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+ion-item {
+  display: flex;
+  align-items: center;
+  --inner-padding-start: 0;
+  --inner-padding-end: 0;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
+ion-label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
-  color: #8c8c8c;
-
+ion-label h2 {
   margin: 0;
+  font-size: 1.2em;
+  font-weight: bold;
 }
 
-#container a {
-  text-decoration: none;
+ion-label p {
+  margin: 0;
+  font-size: 0.9em;
+  color: gray;
 }

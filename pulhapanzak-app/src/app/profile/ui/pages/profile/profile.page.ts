@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserDto } from 'src/app/shared/models/user-interface';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { Router } from '@angular/router';
-import { maxDateValidator } from 'src/app/shared/validators/max-date-validator';
+import { maxDateValidator, numericValidator } from 'src/app/shared/validators/max-date-validator';
 import { StorageService } from 'src/app/shared/services/storage.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { IonButton, IonContent, IonDatetime, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonTitle, IonToast, IonToolbar, ToastController} from '@ionic/angular/standalone';
@@ -16,19 +16,21 @@ import { IonButton, IonContent, IonDatetime, IonHeader, IonIcon, IonImg, IonInpu
   standalone: true,
   imports: [ CommonModule, IonButton, IonContent, IonDatetime, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonTitle, IonToast, IonToolbar, ReactiveFormsModule]
 })
-export class ProfilePage {
+export class ProfilePage implements OnInit {
   private authService = inject(AuthService);
   private formBuilder = inject(FormBuilder);
   private storageService = inject(StorageService);
   private router = inject(Router);
   private toastController = inject(ToastController);
+
   imageSrc: string = 'assets/icon/user.svg';
   user: UserDto | null = null;
   userForm: FormGroup = this.formBuilder.group({
-    name: ['', Validators.required],
+    fullName: ['', Validators.required],
+    identityNumber: ['', [Validators.required, Validators.minLength(13), numericValidator]],
     birthdate: ['', [Validators.required, maxDateValidator(new Date())]],
-    imageProfile: [''],
-    phoneNumber: ['', Validators.required],
+    phoneNumber: ['', [Validators.required, Validators.minLength(8), numericValidator]],
+    imageProfile: ['']
   });
 
   get isBirthdateInvalid(): boolean {
@@ -45,10 +47,11 @@ export class ProfilePage {
       this.user = user;
       this.imageSrc = user?.imageProfile ?? this.imageSrc;
       this.userForm.patchValue({
-        name: user?.name,
+        fullName: user?.name,
+        identityNumber: user?.dni,
         phoneNumber: user?.phoneNumber,
         imageProfile: user?.imageProfile,
-        birthdate: user?.birthdate,
+        birthdate: user?.birthdate
       });
     });
   }
@@ -57,26 +60,18 @@ export class ProfilePage {
     this.getUserLoggued();
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (!this.isFormInvalid && this.user) {
-      this.user.name = this.userForm?.get('name')?.value;
+      this.user.name = this.userForm?.get('fullName')?.value;
+      this.user.dni = this.userForm?.get('identityNumber')?.value;
       this.user.phoneNumber = this.userForm?.get('phoneNumber')?.value;
       this.user.birthdate = this.userForm?.get('birthdate')?.value as Date;
       const userId = this.user.uid;
-      this.storageService
-        .uploadImage(this.imageSrc, `users/${userId}`)
-        .then((url) => {
-          if (url) {
-            if (this.user) this.user.imageProfile = url;
-          }
-          this.saveUser();
-        })
-        .catch(() => {
-          this.showAlert(
-            'Ha ocurrido un error al cambiar su imagen de perfil, vuelva a intentarlo',
-            true
-          );
-        });
+      const imageUrl = await this.uploadProfileImage(userId);
+      if (imageUrl) {
+        this.user.imageProfile = imageUrl;
+      }
+      this.saveUser();
     }
   }
 
@@ -88,18 +83,27 @@ export class ProfilePage {
       saveToGallery: true,
       promptLabelHeader: 'Seleccionar una opción',
       promptLabelPicture: 'Tomar una foto',
-      promptLabelPhoto: 'Elegir de galería',
+      promptLabelPhoto: 'Elegir de galería'
     });
 
-    if (!image) return;
+    if (image) {
+      this.imageSrc = image.webPath ?? image.path ?? '';
+    }
+  }
 
-    this.imageSrc = image.webPath ?? image.path ?? '';
+  async uploadProfileImage(userId: string): Promise<string | null> {
+    try {
+      const url = await this.storageService.uploadImage(this.imageSrc, `users/${userId}.png`);
+      return url;
+    } catch {
+      this.showAlert('Ha ocurrido un error al cambiar su imagen de perfil, vuelva a intentarlo', true);
+      return null;
+    }
   }
 
   saveUser(): void {
     if (this.user) {
-      this.authService
-        .updateUser(this.user)
+      this.authService.updateUser(this.user)
         .then(() => {
           this.getUserLoggued();
           this.showAlert('Usuario actualizado correctamente');
@@ -121,8 +125,7 @@ export class ProfilePage {
   }
 
   signOut(): void {
-    this.authService
-      .signOut()
+    this.authService.signOut()
       .then(() => {
         this.router.navigate(['/login']);
         this.showAlert('Ha cerrado sesión correctamente');

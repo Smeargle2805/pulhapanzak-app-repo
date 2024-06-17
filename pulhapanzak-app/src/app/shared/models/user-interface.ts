@@ -3,6 +3,7 @@ export interface UserDto {
   email: string;
   name: string;
   password: string;
+  dni: string;
   phoneNumber: string;
   imageProfile: string;
   birthdate: Date | null;

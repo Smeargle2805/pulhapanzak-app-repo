@@ -16,13 +16,25 @@
       <ion-item>
         <ion-label class="register-page_mt">Nombre completo:</ion-label>
         <ion-input
-          aria-label="name"
+          aria-label="fullName"
           class="register-page_input"
-          name="name"
+          name="fullName"
           type="text"
           placeholder="Ingrese su nombre y apellido"
-          formControlName="name"
-          ngDefaultControl
+          formControlName="fullName"
+          [ngClass]="{'invalid': userForm.get('fullName')?.invalid && userForm.get('fullName')?.touched}"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label class="register-page_mt">Número de Identidad:</ion-label>
+        <ion-input
+          aria-label="identityNumber"
+          class="register-page_input"
+          name="identityNumber"
+          type="text"
+          placeholder="Ingrese su número de identidad"
+          formControlName="identityNumber"
+          [ngClass]="{'invalid': userForm.get('identityNumber')?.invalid && userForm.get('identityNumber')?.touched}"
         ></ion-input>
       </ion-item>
       <ion-item>
@@ -34,7 +46,7 @@
           type="number"
           placeholder="Ingrese su número de teléfono"
           formControlName="phoneNumber"
-          ngDefaultControl
+          [ngClass]="{'invalid': userForm.get('phoneNumber')?.invalid && userForm.get('phoneNumber')?.touched}"
         ></ion-input>
       </ion-item>
       <ion-item>
@@ -47,7 +59,7 @@
           placeholder="Ingrese su fecha de nacimiento"
           formControlName="birthdate"
           displayFormat="DD/MM/YYYY"
-          ngDefaultControl
+          [ngClass]="{'invalid': isBirthdateInvalid && userForm.get('birthdate')?.touched}"
         ></ion-input>
         <span class="register-page_text-red" *ngIf="isBirthdateInvalid">
           La fecha de nacimiento no puede ser mayor que el día actual.
@@ -58,8 +70,7 @@
         expand="block"
         type="submit"
         [disabled]="isFormInvalid"
-        >Guardar</ion-button
-      >
+      >Guardar</ion-button>
     </form>
     <ion-button
       class="logOut-button"
@@ -72,7 +83,8 @@
         class="logOut-button-icon"
         src="assets/icon/logout.svg"
       ></ion-icon>
-      Cerrar sesión</ion-button
-    >
+      Cerrar sesión
+    </ion-button>
   </div>
 </ion-content>
+
